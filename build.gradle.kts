@@ -2,5 +2,8 @@
 plugins {
     id("com.android.application") version "8.2.2" apply false
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false
+<<<<<<< HEAD
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+=======
+>>>>>>> 3200b89 (Initial commit)
 }

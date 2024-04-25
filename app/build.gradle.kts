@@ -1,7 +1,10 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+<<<<<<< HEAD
     id("com.google.devtools.ksp")
+=======
+>>>>>>> 3200b89 (Initial commit)
 }
 
 kotlin {
@@ -55,6 +58,7 @@ android {
 }
 
 dependencies {
+<<<<<<< HEAD
     // versions
     val nav_version = "2.7.7"
     val lifecycle_version = "2.7.0"
@@ -76,6 +80,8 @@ dependencies {
 
     // ViewModel utilities for Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+=======
+>>>>>>> 3200b89 (Initial commit)
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -92,6 +98,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+<<<<<<< HEAD
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.navigation:navigation-compose:$nav_version")
+=======
+>>>>>>> 3200b89 (Initial commit)
 }

@@ -53,11 +53,6 @@ fun DetailScreen(
 
     val movie by viewModel.movie.collectAsState()
 
-    val context = LocalContext.current
-    val resId = context.resources.getIdentifier(
-        movie.movie.trailer, "raw", context.packageName
-    )
-
     Scaffold(
         topBar = {
             SimpleTopAppBar(title = movie.movie.title) {

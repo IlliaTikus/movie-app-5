@@ -1,5 +1,6 @@
 package com.example.movieappmad24.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,56 +26,67 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
-import com.example.movieappmad24.viewmodels.MoviesViewModel
+import com.example.movieappmad24.data.MovieDatabase
+import com.example.movieappmad24.data.MovieRepository
+import com.example.movieappmad24.viewmodels.DetailsViewModel
+import com.example.movieappmad24.viewmodels.DetailsViewModelFactory
 import com.example.movieappmad24.widgets.HorizontalScrollableImageView
 import com.example.movieappmad24.widgets.MovieRow
 import com.example.movieappmad24.widgets.SimpleTopAppBar
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun DetailScreen(
-    movieId: String?,
-    navController: NavController,
-    moviesViewModel: MoviesViewModel
+    movieId: Long,
+    navController: NavController
 ) {
 
-    movieId?.let {
-        val movie = moviesViewModel.movies.filter { movie -> movie.id == movieId }[0]
+    val db = MovieDatabase.getDatabase(LocalContext.current)
+    val repository = MovieRepository(movieDao = db.movieDao(), movieImageDao = db.movieImageDao())
+    val factory = DetailsViewModelFactory(movieRepository = repository, movieId = movieId)
+    val viewModel: DetailsViewModel = viewModel(factory = factory)
 
+    val movie by viewModel.movie.collectAsState()
 
-        Scaffold (
-            topBar = {
-                SimpleTopAppBar(title = movie.title) {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Go back"
-                        )
-                    }
-                }
-            }
-        ){ innerPadding ->
-            Column {
-                MovieRow(
-                    modifier = Modifier.padding(innerPadding),
-                    movie = movie,
-                    onFavoriteClick = { id -> moviesViewModel.toggleFavoriteMovie(id) }
+    val context = LocalContext.current
+    val resId = context.resources.getIdentifier(
+        movie.movie.trailer, "raw", context.packageName
+    )
+
+    Scaffold(
+        topBar = {
+            SimpleTopAppBar(title = movie.movie.title) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Go back"
                     )
-
-                Divider(modifier = Modifier.padding(4.dp))
-
-                Column {
-                    Text("Movie Trailer")
-                    VideoPlayer(trailerURL = movie.trailer)
                 }
-
-                Divider(modifier = Modifier.padding(4.dp))
-
-                HorizontalScrollableImageView(movie = movie)
             }
+        }
+    ) { innerPadding ->
+        Column {
+            MovieRow(
+                modifier = Modifier.padding(innerPadding),
+                movie = movie,
+                onFavoriteClick = { viewModel.toggleFavoriteMovie() },
+            )
+
+            Divider(modifier = Modifier.padding(4.dp))
+
+            Column {
+                Text("Movie Trailer")
+                VideoPlayer(trailerURL = movie.movie.trailer)
+            }
+
+            Divider(modifier = Modifier.padding(4.dp))
+
+            HorizontalScrollableImageView(movie = movie)
         }
     }
 }

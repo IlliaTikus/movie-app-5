@@ -11,13 +11,11 @@ import com.example.movieappmad24.screens.DetailScreen
 import com.example.movieappmad24.screens.HomeScreen
 import com.example.movieappmad24.screens.WatchlistScreen
 import com.example.movieappmad24.viewmodels.MoviesViewModel
+import com.example.movieappmad24.viewmodels.MoviesViewModel2
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController() // create a NavController instance
-
-    val moviesViewModel: MoviesViewModel = viewModel()  // create a MoviesViewModel instance to use in HomeScreen and WatchlistScreen
-
 
     NavHost(navController = navController, // pass the NavController to NavHost
         startDestination = Screen.HomeScreen.route) {  // pass a start destination
@@ -27,17 +25,16 @@ fun Navigation() {
 
         composable(
             route = Screen.DetailScreen.route,
-            arguments = listOf(navArgument(name = DETAIL_ARGUMENT_KEY) {type = NavType.StringType})
+            arguments = listOf(navArgument(name = DETAIL_ARGUMENT_KEY) {type = NavType.LongType})
         ) { backStackEntry ->
             DetailScreen(
                 navController = navController,
-                movieId = backStackEntry.arguments?.getString(DETAIL_ARGUMENT_KEY),
-                moviesViewModel = moviesViewModel
+                movieId = backStackEntry.arguments?.getLong(DETAIL_ARGUMENT_KEY)!!,
                 )
         }
 
         composable(route = Screen.WatchlistScreen.route){
-            WatchlistScreen(navController = navController, moviesViewModel = moviesViewModel)
+            WatchlistScreen(navController = navController)
         }
     }
 }

@@ -22,8 +22,10 @@ fun HomeScreen(
     navController: NavController
 ) {
     val db = MovieDatabase.getDatabase(LocalContext.current)
-    val repository = MovieRepository(movieDao = db.movieDao())
-    val factory = MoviesViewModelFactory(repository = repository)
+    val movieWithImagesDao = db.movieImageDao()
+    val movieDao = db.movieDao()
+    val movieRepository = MovieRepository(movieDao = movieDao, movieImageDao = movieWithImagesDao)
+    val factory = MoviesViewModelFactory(movieRepository = movieRepository) // Pass MovieRepository to the factory
     val viewModel: MoviesViewModel = viewModel(factory = factory)
 
     Scaffold (
